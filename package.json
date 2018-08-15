@@ -1,0 +1,8 @@
+{
+  "name": "passport-auth-mysql",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/donggyushin/passport-AUTH-MySQL.git",
+  "author": "rontend",
+  "license": "MIT"
+}
