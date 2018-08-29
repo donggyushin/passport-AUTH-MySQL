@@ -8,11 +8,12 @@ var session = require("express-session");
 var MySQLStroe = require("express-mysql-session")(session);
 var sessionKey = require("../options/sessionstore");
 var sessionStore = new MySQLStroe(sessionKey);
-
-var api = require("./routes/index");
+var passport = require("passport"),
+  LocalStrategy = require("passport-local").Strategy;
+var flash = require("connect-flash");
 
 //middlewares
-app.use("/api", api);
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
@@ -25,16 +26,26 @@ app.use(
   })
 );
 
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+
 //settings
 app.set("view engine", "ejs");
 app.set("views", "./views");
 
-var sql = "select * from users";
-conn.query(sql, (err, results, fields) => {
-  if (err) console.log(err);
-  else {
-    console.log(results);
-  }
+//routes
+var api = require("./routes/index");
+var auth = require("./routes/auth");
+
+app.use("/api", api);
+app.use("/auth", auth);
+
+//welcome page
+app.get("/", (req, res) => {
+  var user = req.user;
+
+  res.send(user);
 });
 
 app.listen(8081, () => {
